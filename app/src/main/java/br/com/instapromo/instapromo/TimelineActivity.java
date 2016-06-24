@@ -3,30 +3,35 @@
 package br.com.instapromo.instapromo;
 
 import android.content.Intent;
-import android.database.Observable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.io.File;
 
 import br.com.instapromo.instapromo.connection.ImgUrlAPI;
 import br.com.instapromo.instapromo.model.Image;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class TimelineActivity extends AppCompatActivity {
 
     private ImgUrlAPI api = new ImgUrlAPI();
+    private ImageView imageView;
+    private File picturefile;
+    private String picturePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,35 +41,49 @@ public class TimelineActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        imageView = (ImageView) findViewById(R.id.image_photo);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File file = new File(getExternalFilesDir(null) + "instapromo" + System.currentTimeMillis() + ".jpg");
-                Log.d("FILEEEEE", file.getAbsolutePath());
+                picturePath = getExternalFilesDir(null) + "/instapromo-" + System.currentTimeMillis() + ".jpg";
+                picturefile = new File(picturePath);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picturefile));
                 startActivityForResult(intent, 255);
-                rx.Observable<Image> post = api.post(Uri.fromFile(file));
-                post.observeOn(AndroidSchedulers.mainThread())
-                        .observeOn(Schedulers.io())
-                        .subscribe(new Subscriber<Image>() {
-                            @Override
-                            public void onCompleted() {
-                                Log.d("This shit worked", "lalalal");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.d("Deu ruim", e.toString());
-                            }
-
-                            @Override
-                            public void onNext(Image image) {
-
-                            }
-                        });
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 255) {
+            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+
+            rx.Observable<Image> post = api.post(picturefile);
+            post.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Image>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.d("Deu certo mew", "");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d("Deu ruim meixmo", e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(Image image) {
+                            Log.d("Deu ruim meixmo", image.imgUrlLink());
+                        }
+                    });
+            imageView.setImageBitmap(bitmap);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
