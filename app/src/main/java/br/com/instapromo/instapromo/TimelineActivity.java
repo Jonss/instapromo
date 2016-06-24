@@ -66,7 +66,7 @@ public class TimelineActivity extends AppCompatActivity {
                     .subscribe(new Subscriber<Image>() {
                         @Override
                         public void onCompleted() {
-                            Log.d("Deu certo mew", "");
+                            Log.d("Deu certo mew", "Tcha-rá");
                         }
 
                         @Override
@@ -76,7 +76,7 @@ public class TimelineActivity extends AppCompatActivity {
 
                         @Override
                         public void onNext(Image image) {
-                            Log.d("Deu ruim meixmo", image.imgUrlLink());
+                            Log.d("On next meixmo", image.imgUrlLink());
                         }
                     });
             imageView.setImageBitmap(bitmap);
