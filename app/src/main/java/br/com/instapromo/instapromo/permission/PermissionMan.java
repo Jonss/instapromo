@@ -1,4 +1,4 @@
-package br.com.instapromo.instapromo.domain.permission;
+package br.com.instapromo.instapromo.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

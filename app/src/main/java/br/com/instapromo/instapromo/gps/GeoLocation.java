@@ -1,4 +1,4 @@
-package br.com.instapromo.instapromo.domain.gps;
+package br.com.instapromo.instapromo.gps;
 
 import android.Manifest;
 import android.app.Activity;
