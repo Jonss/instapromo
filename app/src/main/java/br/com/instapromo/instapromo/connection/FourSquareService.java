@@ -8,6 +8,9 @@ import retrofit2.http.Query;
 public interface FourSquareService {
 
     @POST("v2/venues/search")
-    Call<FourSquareResponse> search(@Query("v") String version, @Query("limit") String limit, @Query("client_id") String clientId,
-                                    @Query("client_secret") String clientScret, @Query("ll") String latitudeLongitude);
+    Call<FourSquareResponse> search(@Query("v") String version,
+                                    @Query("limit") String limit,
+                                    @Query("client_id") String clientId,
+                                    @Query("client_secret") String clientScret,
+                                    @Query("ll") String latitudeLongitude);
 }

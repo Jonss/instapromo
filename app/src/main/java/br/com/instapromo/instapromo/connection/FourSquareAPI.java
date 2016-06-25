@@ -1,16 +1,14 @@
 package br.com.instapromo.instapromo.connection;
 
-import java.util.List;
-import java.util.logging.Level;
-
 import br.com.instapromo.instapromo.model.FourSquareResponse;
-import br.com.instapromo.instapromo.model.Venue;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 
 public class FourSquareAPI {
 
@@ -22,7 +20,7 @@ public class FourSquareAPI {
 
     private FourSquareService retrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(logging);  // <-- this is the important line!
 
@@ -37,7 +35,10 @@ public class FourSquareAPI {
     }
 
     public Call<FourSquareResponse> search(double latitude, double longitude, int limit){
-        return retrofit().search(VERSION, String.valueOf(limit), CLIENT_ID, CLIENT_SECRET, formatLocation(latitude, longitude));
+        return retrofit().search(VERSION,
+                String.valueOf(limit),
+                CLIENT_ID, CLIENT_SECRET,
+                formatLocation(latitude, longitude));
     }
 
     private String formatLocation(double latitude, double longitude) {

@@ -1,6 +1,5 @@
 package br.com.instapromo.instapromo.connection;
 
-
 import br.com.instapromo.instapromo.model.Image;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
@@ -16,6 +15,6 @@ public interface ImgUrlService {
     @POST("upload")
     Observable<Image> upload(
             @Header("Authorization") String authorization,
-            @Body RequestBody file
+            @Body RequestBody photo
     );
 }

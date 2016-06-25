@@ -9,7 +9,6 @@ public class PermissionMan {
 
     public static boolean ask(Activity activity, String permission){
         return ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED;
-
     }
 
     public static void request(Activity activity, String permission){
