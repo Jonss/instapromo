@@ -1,6 +1,6 @@
 package br.com.instapromo.instapromo.connection;
 
-import br.com.instapromo.instapromo.model.Image;
+import br.com.instapromo.instapromo.model.ImgurResponse;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
@@ -10,10 +10,10 @@ import rx.Observable;
 /**
  * Created by joao on 24/06/16.
  */
-public interface ImgUrlService {
+public interface ImgurService {
 
     @POST("upload")
-    Observable<Image> upload(@Header("Authorization") String authorization,
-                             @Body RequestBody photo
+    Observable<ImgurResponse> upload(@Header("Authorization") String authorization,
+                                     @Body RequestBody photo
     );
 }

@@ -9,9 +9,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 
+/**
+ * Created by montanha on 25/06/16.
+ */
 public class Back4AppAPI {
 
-    private static final String URL = "https://parseapi.back4app.com/classes/promo";
+    private static final String URL = "https://parseapi.back4app.com/classes/";
     private static final String PARSE_APPLICATION_ID = "5V0YmBQlDDM7omVHZjZ8OXBJW723oUzwXmym2KVS";
     private static final String PARSE_REST_API_KEY   = "lLW27jlnrBZXuXlSXLxn4HQzH7aEDTNZgnPty3Or";
 
@@ -31,11 +34,28 @@ public class Back4AppAPI {
         return retrofit.create(Back4AppService.class);
     }
 
-    public Call<String> post(String dataJson){
-        return retrofit().post(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, dataJson);
+    public rx.Observable<String> post(String local, String desc, String preco, String urlImg, double latitude, double longitude) {
+        String json =new StringBuilder()
+                .append("{\"local\":\"").append(local)
+                .append("\",\"desc\":\"").append(desc)
+                .append("\",\"preco\":\"").append(preco)
+                .append("\",\"urlImg\":\"").append(urlImg)
+                .append("\",\"loc\":{\"__type\":\"GeoPoint\",\"latitude\":").append(latitude)
+                .append(",\"longitude\":").append(longitude)
+                .append("}}")
+                .toString();
+
+        return retrofit().postPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json);
     }
 
-    public Call<String> get(String queryJson){
-        return retrofit().get(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, queryJson);
+    public Call<String> get(double latitude, double longitude, int raio) {
+        String json =new StringBuilder()
+                .append("where={\"loc\":{\"$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":").append(String.valueOf(latitude))
+                .append(",\"longitude\":").append(String.valueOf(longitude))
+                .append("},\"$maxDistanceInKilometers\":").append(String.valueOf(raio))
+                .append("}}")
+                .toString();
+
+        return retrofit().getPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json);
     }
 }

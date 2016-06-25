@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import br.com.instapromo.instapromo.model.Image;
+import br.com.instapromo.instapromo.model.ImgurResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -20,16 +20,17 @@ import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 /**
  * Created by joao on 24/06/16.
  */
-public class ImgUrlAPI {
+public class ImgurAPI {
 
     private static final String IMGURL = "https://api.imgur.com/3/";
     private static final String AUTHORIZATION = "Client-ID 006e897cd5ac791";
 
-    private ImgUrlService retrofit() {
+
+    private ImgurService retrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
+//        httpClient.addInterceptor(logging);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -38,10 +39,10 @@ public class ImgUrlAPI {
                 .client(httpClient.build())
                 .build();
 
-        return retrofit.create(ImgUrlService.class);
+        return retrofit.create(ImgurService.class);
     }
 
-    public rx.Observable<Image> post(File file) {
+    public rx.Observable<ImgurResponse> post(File file) {
         RequestBody requestBody = null;
 
         try {

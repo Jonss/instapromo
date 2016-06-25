@@ -17,7 +17,6 @@ public class FourSquareAPI {
     private static final String CLIENT_ID = "VZOV13XTCAUVXLARQYN4L5OSGTUEIMJZNUUL4U11FAGN2MM2";
     private static final String CLIENT_SECRET = "MHP1PC313HSS4QCV40JDK43Y40SAY1HV4DFVNPWLCYL104PT";
 
-
     private FourSquareService retrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(BODY);
@@ -42,10 +41,10 @@ public class FourSquareAPI {
     }
 
     private String formatLocation(double latitude, double longitude) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(latitude)
-               .append(",")
-               .append(longitude);
-        return builder.toString();
+        return new StringBuilder()
+                .append(latitude)
+                .append(",")
+                .append(longitude)
+                .toString();
     }
 }
