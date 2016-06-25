@@ -13,8 +13,7 @@ import rx.Observable;
 public interface ImgUrlService {
 
     @POST("upload")
-    Observable<Image> upload(
-            @Header("Authorization") String authorization,
-            @Body RequestBody photo
+    Observable<Image> upload(@Header("Authorization") String authorization,
+                             @Body RequestBody photo
     );
 }
