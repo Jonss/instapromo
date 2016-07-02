@@ -1,6 +1,7 @@
 package br.com.instapromo.instapromo;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 
 import java.io.File;
+import java.io.IOException;
 
 import br.com.instapromo.instapromo.connection.Back4AppAPI;
 import br.com.instapromo.instapromo.connection.ImgurAPI;
 import br.com.instapromo.instapromo.model.ImgurResponse;
+import okhttp3.ResponseBody;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -46,23 +49,25 @@ public class TimelineActivity extends AppCompatActivity {
         TabHost host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
 
+        Resources res = getResources();
+
         //Tab 1
-        TabHost.TabSpec spec = host.newTabSpec("Promocao");
-        spec.setContent(R.id.tab1);
-        spec.setIndicator("Promocao");
-        host.addTab(spec);
+        TabHost.TabSpec sPromo = host.newTabSpec("Promocao");
+        sPromo.setContent(R.id.tab1);
+        sPromo.setIndicator("", res.getDrawable(R.mipmap.insta_timeline, null));
+        host.addTab(sPromo);
 
         //Tab 2
-        spec = host.newTabSpec("Photo");
-        spec.setContent(R.id.tab2);
-        spec.setIndicator("Photo");
-        host.addTab(spec);
+        TabHost.TabSpec sPhoto = host.newTabSpec("Photo");
+        sPhoto.setContent(R.id.tab2);
+        sPhoto.setIndicator("", res.getDrawable(R.mipmap.insta_pic, null));
+        host.addTab(sPhoto);
 
         //Tab 3
-        spec = host.newTabSpec("Sobre");
-        spec.setContent(R.id.tab3);
-        spec.setIndicator("Sobre");
-        host.addTab(spec);
+        TabHost.TabSpec sAbout = host.newTabSpec("Sobre");
+        sAbout.setContent(R.id.tab3);
+        sAbout.setIndicator("", res.getDrawable(R.mipmap.insta_about, null));
+        host.addTab(sAbout);
 
         //Texts
         textLocal = (EditText) findViewById(R.id.textLocal);
@@ -97,39 +102,43 @@ public class TimelineActivity extends AppCompatActivity {
                         .subscribe(new Subscriber<ImgurResponse>() {
                             @Override
                             public void onCompleted() {
-                                Log.d("[IP] Deu certo mew", "Tcha-rá");
+                                Log.d("[IP] Imgur", "Completo");
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.d("[IP] Deu ruim meixmo", e.getMessage());
+                                Log.e("[IP] Imgur", e.getMessage());
                             }
 
                             @Override
                             public void onNext(ImgurResponse image) {
-                                Log.d("[IP] On next meixmo", image.getData().getLink());
+                                Log.d("[IP] Imgur", image.getData().getLink());
 
                                 String local = textLocal.getText().toString();
                                 String desc  = textDesc.getText().toString();
                                 String preco = textPreco.getText().toString();
 
-                                rx.Observable<String> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(), -43.00, -43.00);
+                                rx.Observable<ResponseBody> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(), -43.00, -43.00);
                                 postJson.subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Subscriber<String>() {
+                                        .subscribe(new Subscriber<ResponseBody>() {
                                             @Override
                                             public void onCompleted() {
-                                                Log.d("[IP] Certo", "Tcha-rá");
+                                                Log.d("[IP] Back4App", "Completo");
                                             }
 
                                             @Override
                                             public void onError(Throwable e) {
-                                                Log.d("[IP] Ruim", e.getMessage());
+                                                Log.e("[IP] Back4App", e.getMessage());
                                             }
 
                                             @Override
-                                            public void onNext(String s) {
-                                                Log.d("[IP] Next", s);
+                                            public void onNext(ResponseBody responseBody) {
+                                                try {
+                                                    Log.d("[IP] Back4App", responseBody.string());
+                                                } catch (IOException e) {
+                                                    Log.e("[IP] Back4App", e.getMessage());
+                                                }
                                             }
                                         });
                             }

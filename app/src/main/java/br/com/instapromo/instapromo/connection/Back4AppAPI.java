@@ -1,6 +1,13 @@
 package br.com.instapromo.instapromo.connection;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -34,28 +41,41 @@ public class Back4AppAPI {
         return retrofit.create(Back4AppService.class);
     }
 
-    public rx.Observable<String> post(String local, String desc, String preco, String urlImg, double latitude, double longitude) {
-        String json =new StringBuilder()
-                .append("{\"local\":\"").append(local)
-                .append("\",\"desc\":\"").append(desc)
-                .append("\",\"preco\":\"").append(preco)
-                .append("\",\"urlImg\":\"").append(urlImg)
-                .append("\",\"loc\":{\"__type\":\"GeoPoint\",\"latitude\":").append(latitude)
-                .append(",\"longitude\":").append(longitude)
-                .append("}}")
-                .toString();
+    public rx.Observable<ResponseBody> post(String local, String desc, String preco, String urlImg, double latitude, double longitude) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("local", local)
+                    .put("desc", desc)
+                    .put("preco", preco)
+                    .put("urlImg", urlImg)
+                    .put("loc", new JSONObject()
+                            .put("__type", "GeoPoint")
+                            .put("latitude", latitude)
+                            .put("longitude", longitude));
+        } catch (JSONException e) {
+            Log.e("[IP] POST JSON", e.getMessage());
+        }
 
-        return retrofit().postPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json);
+        RequestBody data = RequestBody.create(
+                okhttp3.MediaType.parse("application/json; charset=utf-8"),
+                json.toString());
+
+        return retrofit().postPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, data);
     }
 
-    public Call<String> get(double latitude, double longitude, int raio) {
-        String json =new StringBuilder()
-                .append("where={\"loc\":{\"$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":").append(String.valueOf(latitude))
-                .append(",\"longitude\":").append(String.valueOf(longitude))
-                .append("},\"$maxDistanceInKilometers\":").append(String.valueOf(raio))
-                .append("}}")
-                .toString();
+    public Call<ResponseBody> get(double latitude, double longitude, int raio) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("loc", new JSONObject()
+                    .put("$nearSphere", new JSONObject()
+                            .put("__type", "GeoPoint")
+                            .put("latitude", latitude)
+                            .put("longitude", longitude)))
+                    .put("$maxDistanceInKilometers", raio);
+        } catch (JSONException e) {
+            Log.e("[IP] WHERE JSON", e.getMessage());
+        }
 
-        return retrofit().getPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json);
+        return retrofit().where(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json.toString());
     }
 }
