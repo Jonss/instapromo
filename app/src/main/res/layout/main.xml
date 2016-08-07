@@ -20,13 +20,7 @@
             android:layout_weight="1" >
 
             <!--TAB 1-->
-            <ListView
-                android:id="@+id/tab1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#ffc916"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"/>
+            <include layout="@layout/content_timeline" />
 
             <!--TAB 2-->
             <include layout="@layout/content_tab_photo" />
