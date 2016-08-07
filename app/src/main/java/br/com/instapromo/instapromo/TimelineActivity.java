@@ -1,13 +1,16 @@
 package br.com.instapromo.instapromo;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +24,10 @@ import java.io.File;
 import java.io.IOException;
 
 import br.com.instapromo.instapromo.connection.Back4AppAPI;
+import br.com.instapromo.instapromo.connection.FourSquareAPI;
 import br.com.instapromo.instapromo.connection.ImgurAPI;
+import br.com.instapromo.instapromo.gps.GeoLocation;
+import br.com.instapromo.instapromo.model.FourSquareResponse;
 import br.com.instapromo.instapromo.model.ImgurResponse;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
@@ -32,6 +38,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private ImgurAPI apiImgur = new ImgurAPI();
     private Back4AppAPI apiBack = new Back4AppAPI();
+    private FourSquareAPI apiFoursquare = new FourSquareAPI();
 
     private ImageView imageView;
     private EditText textLocal;
@@ -69,8 +76,52 @@ public class TimelineActivity extends AppCompatActivity {
         sAbout.setIndicator("", res.getDrawable(R.mipmap.insta_about, null));
         host.addTab(sAbout);
 
-        //Texts
+        //Location
+        final Location location = new GeoLocation(this).getLocation();
+
+        //Text Local
         textLocal = (EditText) findViewById(R.id.textLocal);
+        textLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rx.Observable<FourSquareResponse> venues = apiFoursquare.search(location.getLatitude(), location.getLongitude(), 10);
+                venues.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<FourSquareResponse>() {
+                            @Override
+                            public void onCompleted() {
+                                Log.d("[IP] Foursquare", "Completo");
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("[IP] Foursquare", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(FourSquareResponse fourSquareResponse) {
+                                final CharSequence venuesStr[] = new CharSequence[10];
+
+                                Log.d("[IP] Foursquare", String.valueOf(fourSquareResponse.getVenues().size()));
+                                for (int i = 0; i < fourSquareResponse.getVenues().size(); i++) {
+                                    venuesStr[i] = fourSquareResponse.getVenues().get(i).getName();
+                                }
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(TimelineActivity.this);
+                                builder.setTitle("Escolha o Local");
+                                builder.setItems(venuesStr, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        textLocal.setText(venuesStr[which]);
+                                    }
+                                });
+                                builder.show();
+                            }
+                        });
+            }
+        });
+
+        //Texts
         textDesc  = (EditText) findViewById(R.id.textDesc);
         textPreco = (EditText) findViewById(R.id.textPreco);
 
@@ -96,7 +147,6 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 rx.Observable<ImgurResponse> post = apiImgur.post(picturefile);
-
                 post.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Subscriber<ImgurResponse>() {
@@ -118,7 +168,8 @@ public class TimelineActivity extends AppCompatActivity {
                                 String desc  = textDesc.getText().toString();
                                 String preco = textPreco.getText().toString();
 
-                                rx.Observable<ResponseBody> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(), -43.00, -43.00);
+                                rx.Observable<ResponseBody> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(),
+                                        location.getLatitude(), location.getLongitude());
                                 postJson.subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(new Subscriber<ResponseBody>() {

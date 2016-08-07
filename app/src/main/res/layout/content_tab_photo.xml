@@ -33,7 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textLocal"
-        android:text="Fresto"/>
+        android:text="Fresto"
+        android:editable="false"/>
 
     <EditText
         android:layout_width="match_parent"

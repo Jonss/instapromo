@@ -3,7 +3,6 @@ package br.com.instapromo.instapromo.connection;
 import br.com.instapromo.instapromo.model.FourSquareResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,10 +32,11 @@ public class FourSquareAPI {
         return retrofit.create(FourSquareService.class);
     }
 
-    public Call<FourSquareResponse> search(double latitude, double longitude, int limit){
+    public rx.Observable<FourSquareResponse> search(double latitude, double longitude, int limit){
         return retrofit().search(VERSION,
                 String.valueOf(limit),
-                CLIENT_ID, CLIENT_SECRET,
+                CLIENT_ID,
+                CLIENT_SECRET,
                 formatLocation(latitude, longitude));
     }
 

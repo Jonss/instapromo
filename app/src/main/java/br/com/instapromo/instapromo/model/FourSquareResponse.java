@@ -14,11 +14,11 @@ public class FourSquareResponse {
         this.response = response;
     }
 
-    public List<Venue> getVenues(){
+    public List<Venue> getVenues() {
         return response.getVenues();
     }
 
-    public class Response{
+    public class Response {
         List<Venue> venues;
 
         public List<Venue> getVenues() {
