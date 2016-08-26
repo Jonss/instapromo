@@ -1,6 +1,5 @@
 package br.com.instapromo.instapromo.permission;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.design.widget.Snackbar;
