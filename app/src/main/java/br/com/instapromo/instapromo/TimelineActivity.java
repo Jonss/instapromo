@@ -88,12 +88,14 @@ public class TimelineActivity extends AppCompatActivity
 
     private Location location;
 
+    private TabHost host;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        final TabHost host = (TabHost)findViewById(R.id.tabHost);
+        host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
 
         //Permissions
@@ -127,7 +129,12 @@ public class TimelineActivity extends AppCompatActivity
         textLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                location = new GeoLocation(TimelineActivity.this).getLocation();
+                if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
+                        || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
+                    PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+                } else {
+                    location = new GeoLocation(TimelineActivity.this).getLocation();
+                }
 
                 rx.Observable<FourSquareResponse> venues = apiFoursquare.search(location.getLatitude(), location.getLongitude(), 10);
                 venues.subscribeOn(Schedulers.io())
@@ -252,23 +259,16 @@ public class TimelineActivity extends AppCompatActivity
         });
     }
 
-    private List<Product> fakeProdList() {
-        List<Product> products = new ArrayList<>();
-        for (int i=0; i < 5; i++) {
-            Product product = new Product();
-            product.setDesc("desc " + i);
-            product.setPreco("" + i);
-            product.setLocal("loja " + i);
-            product.setUrlImg("http://mdemulher.abril.com.br/sites/mdemulher/files/styles/retangular_horizontal_2/public/migracao/receita-macarrao-aromatico.jpg");
-            products.add(product);
-        }
-        return products;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        location = new GeoLocation(TimelineActivity.this).getLocation();
+
+        if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
+                || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
+            PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+        } else {
+            location = new GeoLocation(TimelineActivity.this).getLocation();
+        }
 
         rx.Observable<Back4AppResponse> promos = apiBack.get(location.getLatitude(), location.getLongitude(), 5);
         promos.subscribeOn(Schedulers.io())
