@@ -102,6 +102,8 @@ public class TimelineActivity extends AppCompatActivity
         if (!PermissionMan.hasPermission(this, ACCESS_COARSE_LOCATION)
                 || !PermissionMan.hasPermission(this, ACCESS_FINE_LOCATION)) {
             PermissionMan.request(host, this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+        } else {
+            location = new GeoLocation(TimelineActivity.this).getLocation();
         }
 
         Resources res = getResources();
@@ -268,31 +270,44 @@ public class TimelineActivity extends AppCompatActivity
             PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
         } else {
             location = new GeoLocation(TimelineActivity.this).getLocation();
+
+            rx.Observable<Back4AppResponse> promos = apiBack.get(location.getLatitude(), location.getLongitude(), 5);
+            promos.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Back4AppResponse>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.d("[IP] Back4App Get", "Completo");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("[IP] Back4App Get", e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(Back4AppResponse back4AppResponse) {
+                            if (back4AppResponse.getResults().isEmpty()) {
+                                Product productEmpty = new Product();
+                                productEmpty.setDesc("");
+                                productEmpty.setLocal("");
+                                productEmpty.setPreco("");
+                                productEmpty.setUrlImg("http://i.imgur.com/INAUbtO.png");
+
+                                List<Product> list = new ArrayList();
+                                list.add(productEmpty);
+
+                                adapter = new ProductAdapter(TimelineActivity.this, list);
+                            } else {
+                                adapter = new ProductAdapter(TimelineActivity.this, back4AppResponse.getResults());
+                            }
+
+                            recyclerView = (RecyclerView) findViewById(R.id.timeline);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
         }
-
-        rx.Observable<Back4AppResponse> promos = apiBack.get(location.getLatitude(), location.getLongitude(), 5);
-        promos.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Back4AppResponse>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d("[IP] Back4App Get", "Completo");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("[IP] Back4App Get", e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Back4AppResponse back4AppResponse) {
-                        adapter = new ProductAdapter(TimelineActivity.this, back4AppResponse.getResults());
-
-                        recyclerView = (RecyclerView) findViewById(R.id.timeline);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        recyclerView.setAdapter(adapter);
-                    }
-                });
     }
 
     @Override
