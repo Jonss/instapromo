@@ -34,8 +34,10 @@ import br.com.instapromo.instapromo.connection.Back4AppAPI;
 import br.com.instapromo.instapromo.connection.FourSquareAPI;
 import br.com.instapromo.instapromo.connection.ImgurAPI;
 import br.com.instapromo.instapromo.gps.GeoLocation;
+import br.com.instapromo.instapromo.model.Back4AppResponse;
 import br.com.instapromo.instapromo.model.FourSquareResponse;
 import br.com.instapromo.instapromo.model.ImgurResponse;
+import br.com.instapromo.instapromo.model.Product;
 import br.com.instapromo.instapromo.permission.PermissionMan;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
@@ -86,19 +88,15 @@ public class TimelineActivity extends AppCompatActivity
 
     private Location location;
 
+    private TabHost host;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        final TabHost host = (TabHost)findViewById(R.id.tabHost);
+        host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
-
-        adapter = new ProductAdapter(this, fakeProdList());
-
-        recyclerView = (RecyclerView) findViewById(R.id.timeline);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
 
         //Permissions
         if (!PermissionMan.hasPermission(this, ACCESS_COARSE_LOCATION)
@@ -131,7 +129,12 @@ public class TimelineActivity extends AppCompatActivity
         textLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                location = new GeoLocation(TimelineActivity.this).getLocation();
+                if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
+                        || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
+                    PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+                } else {
+                    location = new GeoLocation(TimelineActivity.this).getLocation();
+                }
 
                 rx.Observable<FourSquareResponse> venues = apiFoursquare.search(location.getLatitude(), location.getLongitude(), 10);
                 venues.subscribeOn(Schedulers.io())
@@ -256,24 +259,47 @@ public class TimelineActivity extends AppCompatActivity
         });
     }
 
-    private List<Product> fakeProdList() {
-        List<Product> products = new ArrayList<>();
-        for (int i=0; i < 5; i++) {
-            Product product = new Product();
-            product.setDesc("desc " + i);
-            product.setPrice("" + i);
-            product.setStore("loja " + i);
-            product.setImageUrl("http://mdemulher.abril.com.br/sites/mdemulher/files/styles/retangular_horizontal_2/public/migracao/receita-macarrao-aromatico.jpg");
-            products.add(product);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
+                || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
+            PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+        } else {
+            location = new GeoLocation(TimelineActivity.this).getLocation();
         }
-        return products;
+
+        rx.Observable<Back4AppResponse> promos = apiBack.get(location.getLatitude(), location.getLongitude(), 5);
+        promos.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Back4AppResponse>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d("[IP] Back4App Get", "Completo");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("[IP] Back4App Get", e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Back4AppResponse back4AppResponse) {
+                        adapter = new ProductAdapter(TimelineActivity.this, back4AppResponse.getResults());
+
+                        recyclerView = (RecyclerView) findViewById(R.id.timeline);
+                        recyclerView.setLayoutManager(linearLayoutManager);
+                        recyclerView.setAdapter(adapter);
+                    }
+                });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 255) {
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
         }
 
         super.onActivityResult(requestCode, resultCode, data);
