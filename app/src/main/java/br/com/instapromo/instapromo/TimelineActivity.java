@@ -299,7 +299,7 @@ public class TimelineActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 255) {
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
         }
 
         super.onActivityResult(requestCode, resultCode, data);
