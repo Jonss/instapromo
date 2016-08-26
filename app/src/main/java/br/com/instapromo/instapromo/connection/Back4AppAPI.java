@@ -5,6 +5,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import br.com.instapromo.instapromo.model.Back4AppResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -63,19 +67,30 @@ public class Back4AppAPI {
         return retrofit().postPromo(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, data);
     }
 
-    public Call<ResponseBody> get(double latitude, double longitude, int raio) {
+    public rx.Observable<Back4AppResponse> get(double latitude, double longitude, int raio) {
         JSONObject json = new JSONObject();
+
         try {
             json.put("loc", new JSONObject()
                     .put("$nearSphere", new JSONObject()
                             .put("__type", "GeoPoint")
                             .put("latitude", latitude)
-                            .put("longitude", longitude)))
-                    .put("$maxDistanceInKilometers", raio);
+                            .put("longitude", longitude))
+                    .put("$maxDistanceInKilometers", raio)
+            );
         } catch (JSONException e) {
             Log.e("[IP] WHERE JSON", e.getMessage());
         }
 
-        return retrofit().where(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, json.toString());
+        Log.e("[IP] JSON", json.toString());
+
+        String query = null;
+        try {
+            query = URLEncoder.encode(json.toString(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return retrofit().where(PARSE_APPLICATION_ID, PARSE_REST_API_KEY, query);
     }
 }

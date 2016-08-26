@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import br.com.instapromo.instapromo.model.Product;
+
 public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
     private LayoutInflater inflater;
@@ -29,10 +31,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
     @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
         Product product = products.get(position);
-        holder.setImageUrl(context, product.getImageUrl());
+        holder.setImageUrl(context, product.getUrlImg());
         holder.setProductDesc(product.getDesc());
-        holder.setProductDesc(product.getPrice());
-        holder.setProductDesc(product.getStore());
+        holder.setProductDesc(product.getPreco());
+        holder.setProductDesc(product.getLocal());
     }
 
     @Override
