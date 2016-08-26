@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,8 @@ import android.widget.TabHost;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.instapromo.instapromo.connection.Back4AppAPI;
 import br.com.instapromo.instapromo.connection.FourSquareAPI;
@@ -48,6 +52,12 @@ public class TimelineActivity extends AppCompatActivity {
     private File picturefile;
     private String picturePath;
 
+    private RecyclerView recyclerView;
+
+    private ProductAdapter adapter;
+
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +65,12 @@ public class TimelineActivity extends AppCompatActivity {
 
         TabHost host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
+
+        adapter = new ProductAdapter(this, fakeProdList());
+
+        recyclerView = (RecyclerView) findViewById(R.id.timeline);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
 
         Resources res = getResources();
 
@@ -196,6 +212,19 @@ public class TimelineActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    private List<Product> fakeProdList() {
+        List<Product> products = new ArrayList<>();
+        for (int i=0; i < 5; i++) {
+            Product product = new Product();
+            product.setDesc("desc " + i);
+            product.setPrice("" + i);
+            product.setStore("loja " + i);
+            product.setImageUrl("http://mdemulher.abril.com.br/sites/mdemulher/files/styles/retangular_horizontal_2/public/migracao/receita-macarrao-aromatico.jpg");
+            products.add(product);
+        }
+        return products;
     }
 
     @Override
