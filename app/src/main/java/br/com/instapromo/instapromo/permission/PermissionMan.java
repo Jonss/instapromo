@@ -1,21 +1,22 @@
 package br.com.instapromo.instapromo.permission;
 
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
 import br.com.instapromo.instapromo.R;
+
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.support.v4.app.ActivityCompat.requestPermissions;
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 public class PermissionMan {
 
     public static final String TAG = "PermissionMan";
 
     public static boolean hasPermission(Activity activity, String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
+        return checkSelfPermission(activity, permission) == PERMISSION_GRANTED;
     }
 
     public static void request(final View view,
@@ -31,7 +32,7 @@ public class PermissionMan {
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ActivityCompat.requestPermissions(activity,
+                        requestPermissions(activity,
                                 permissions,
                                 requestCode);
                     }
