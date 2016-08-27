@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,8 +87,6 @@ public class TimelineActivity extends AppCompatActivity
     private static final int REQUEST_STORAGE = 1;
     private static final int REQUEST_LOCATION = 2;
 
-    private Location location;
-
     private TabHost host;
 
     @Override
@@ -97,14 +96,6 @@ public class TimelineActivity extends AppCompatActivity
 
         host = (TabHost)findViewById(R.id.tabHost);
         host.setup();
-
-        //Permissions
-        if (!PermissionMan.hasPermission(this, ACCESS_COARSE_LOCATION)
-                || !PermissionMan.hasPermission(this, ACCESS_FINE_LOCATION)) {
-            PermissionMan.request(host, this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
-        } else {
-            location = new GeoLocation(TimelineActivity.this).getLocation();
-        }
 
         Resources res = getResources();
 
@@ -131,47 +122,49 @@ public class TimelineActivity extends AppCompatActivity
         textLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Location location;
+
                 if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
                         || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
                     PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
                 } else {
                     location = new GeoLocation(TimelineActivity.this).getLocation();
-                }
 
-                rx.Observable<FourSquareResponse> venues = apiFoursquare.search(location.getLatitude(), location.getLongitude(), 10);
-                venues.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<FourSquareResponse>() {
-                            @Override
-                            public void onCompleted() {
-                                Log.d("[IP] Foursquare", "Completo");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("[IP] Foursquare", e.getMessage());
-                            }
-
-                            @Override
-                            public void onNext(FourSquareResponse fourSquareResponse) {
-                                final CharSequence venuesStr[] = new CharSequence[10];
-
-                                Log.d("[IP] Foursquare", String.valueOf(fourSquareResponse.getVenues().size()));
-                                for (int i = 0; i < fourSquareResponse.getVenues().size(); i++) {
-                                    venuesStr[i] = fourSquareResponse.getVenues().get(i).getName();
+                    rx.Observable<FourSquareResponse> venues = apiFoursquare.search(location.getLatitude(), location.getLongitude(), 10);
+                    venues.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<FourSquareResponse>() {
+                                @Override
+                                public void onCompleted() {
+                                    Log.d("[IP] Foursquare", "Completo");
                                 }
 
-                                AlertDialog.Builder builder = new AlertDialog.Builder(TimelineActivity.this);
-                                builder.setTitle("Escolha o Local");
-                                builder.setItems(venuesStr, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        textLocal.setText(venuesStr[which]);
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.e("[IP] Foursquare", e.getMessage());
+                                }
+
+                                @Override
+                                public void onNext(FourSquareResponse fourSquareResponse) {
+                                    final CharSequence venuesStr[] = new CharSequence[10];
+
+                                    Log.d("[IP] Foursquare", String.valueOf(fourSquareResponse.getVenues().size()));
+                                    for (int i = 0; i < fourSquareResponse.getVenues().size(); i++) {
+                                        venuesStr[i] = fourSquareResponse.getVenues().get(i).getName();
                                     }
-                                });
-                                builder.show();
-                            }
-                        });
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(TimelineActivity.this);
+                                    builder.setTitle("Escolha o Local");
+                                    builder.setItems(venuesStr, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            textLocal.setText(venuesStr[which]);
+                                        }
+                                    });
+                                    builder.show();
+                                }
+                            });
+                }
             }
         });
 
@@ -208,54 +201,62 @@ public class TimelineActivity extends AppCompatActivity
                         || !PermissionMan.hasPermission(TimelineActivity.this, WRITE_EXTERNAL_STORAGE)) {
                     PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_EXTERNAL_STORAGE, permission_storage_rationale, REQUEST_STORAGE);
                 } else {
-                    rx.Observable<ImgurResponse> post = apiImgur.post(picturefile);
-                    post.subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<ImgurResponse>() {
-                                @Override
-                                public void onCompleted() {
-                                    Log.d("[IP] Imgur", "Completo");
-                                }
+                    final Location location;
 
-                                @Override
-                                public void onError(Throwable e) {
-                                    Log.e("[IP] Imgur", e.getMessage());
-                                }
+                    if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
+                            || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
+                        PermissionMan.request(host, TimelineActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
+                    } else {
+                        location = new GeoLocation(TimelineActivity.this).getLocation();
+                        rx.Observable<ImgurResponse> post = apiImgur.post(picturefile);
+                        post.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Subscriber<ImgurResponse>() {
+                                    @Override
+                                    public void onCompleted() {
+                                        Log.d("[IP] Imgur", "Completo");
+                                    }
 
-                                @Override
-                                public void onNext(ImgurResponse image) {
-                                    Log.d("[IP] Imgur", image.getData().getLink());
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Log.e("[IP] Imgur", e.getMessage());
+                                    }
 
-                                    String local = textLocal.getText().toString();
-                                    String desc  = textDesc.getText().toString();
-                                    String preco = textPreco.getText().toString();
+                                    @Override
+                                    public void onNext(ImgurResponse image) {
+                                        Log.d("[IP] Imgur", image.getData().getLink());
 
-                                    rx.Observable<ResponseBody> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(),
-                                            location.getLatitude(), location.getLongitude());
-                                    postJson.subscribeOn(Schedulers.io())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Subscriber<ResponseBody>() {
-                                                @Override
-                                                public void onCompleted() {
-                                                    Log.d("[IP] Back4App", "Completo");
-                                                }
+                                        String local = textLocal.getText().toString();
+                                        String desc  = textDesc.getText().toString();
+                                        String preco = textPreco.getText().toString();
 
-                                                @Override
-                                                public void onError(Throwable e) {
-                                                    Log.e("[IP] Back4App", e.getMessage());
-                                                }
+                                        rx.Observable<ResponseBody> postJson =  apiBack.post(local, desc, preco, image.getData().getLink(),
+                                                location.getLatitude(), location.getLongitude());
+                                        postJson.subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe(new Subscriber<ResponseBody>() {
+                                                    @Override
+                                                    public void onCompleted() {
+                                                        Log.d("[IP] Back4App", "Completo");
+                                                    }
 
-                                                @Override
-                                                public void onNext(ResponseBody responseBody) {
-                                                    try {
-                                                        Log.d("[IP] Back4App", responseBody.string());
-                                                    } catch (IOException e) {
+                                                    @Override
+                                                    public void onError(Throwable e) {
                                                         Log.e("[IP] Back4App", e.getMessage());
                                                     }
-                                                }
-                                            });
-                                }
-                            });
+
+                                                    @Override
+                                                    public void onNext(ResponseBody responseBody) {
+                                                        try {
+                                                            Log.d("[IP] Back4App", responseBody.string());
+                                                        } catch (IOException e) {
+                                                            Log.e("[IP] Back4App", e.getMessage());
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                });
+                    }
                 }
             }
         });
@@ -264,6 +265,8 @@ public class TimelineActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        Location location;
 
         if (!PermissionMan.hasPermission(TimelineActivity.this, ACCESS_COARSE_LOCATION)
                 || !PermissionMan.hasPermission(TimelineActivity.this, ACCESS_FINE_LOCATION)) {
@@ -343,13 +346,15 @@ public class TimelineActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA) {
             Log.i(TAG, "Received response for Camera permission request.");
 
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "CAMERA permission has now been granted.");
+                Toast.makeText(this.getApplicationContext(), "Obrigado por liberar o acesso a camera. Pressione o botao da camera para compartilhar promocoes! =)", Toast.LENGTH_LONG);
             } else {
                 Log.i(TAG, "CAMERA permission was NOT granted.");
             }
@@ -359,6 +364,7 @@ public class TimelineActivity extends AppCompatActivity
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "READ/WRITE permission has now been granted.");
+                Toast.makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de escrita. Pressione novamente o botao de salvar ", Toast.LENGTH_LONG);
             } else {
                 Log.i(TAG, "READ/WRITE permission was NOT granted.");
             }
@@ -368,6 +374,7 @@ public class TimelineActivity extends AppCompatActivity
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "LOCATION permission has now been granted.");
+                Toast.makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de localizacao, assim mostraremos as promo ao seu redor! =)", Toast.LENGTH_LONG);
             } else {
                 Log.i(TAG, "LOCATION permission was NOT granted.");
             }
