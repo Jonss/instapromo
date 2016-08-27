@@ -33,8 +33,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
         Product product = products.get(position);
         holder.setImageUrl(context, product.getUrlImg());
         holder.setProductDesc(product.getDesc());
-        holder.setProductDesc(product.getPreco());
-        holder.setProductDesc(product.getLocal());
+        holder.setProductPrice(product.getPreco());
+        holder.setProductStore(product.getLocal());
     }
 
     @Override

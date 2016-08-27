@@ -46,17 +46,6 @@
                     android:hint="(opcional)\nInclua informações adicionais\nex: validade, quantidade"
                     android:layout_weight="0.42"/>
             </LinearLayout>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/fab_margin"
-                android:elevation="6dp"
-                android:backgroundTint="#5b89ff"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:src="@android:drawable/ic_menu_save" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -73,16 +62,24 @@
                 android:scaleType="fitXY"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabCam"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                android:backgroundTint="#5b89ff"
-                android:src="@android:drawable/ic_menu_camera" />
         </RelativeLayout>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:elevation="6dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_menu_save" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabCam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@android:drawable/ic_menu_camera" />
     </RelativeLayout>
 </LinearLayout>

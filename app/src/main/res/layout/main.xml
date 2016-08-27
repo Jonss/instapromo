@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TabHost
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tabHost"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context=".TimelineActivity">
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:padding="5dp">
-        <FrameLayout
-            android:id="@android:id/tabcontent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/llMain"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#FF3F51B5"
+              android:orientation="vertical"
+              android:weightSum="1"
+              tools:context=".TimelineActivity">
+    <TabHost
+        android:id="@+id/tabHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:padding="5dp"
-            android:layout_weight="1" >
+            android:orientation="vertical">
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="2dp"
+                android:layout_weight="1" >
 
-            <!--TAB 1-->
-            <include layout="@layout/content_timeline" />
+                <!--TAB 1-->
+                <include layout="@layout/content_timeline" />
 
-            <!--TAB 2-->
-            <include layout="@layout/content_tab_photo" />
+                <!--TAB 2-->
+                <include layout="@layout/content_tab_photo" />
 
-            <!--TAB 3-->
-            <LinearLayout
-                android:id="@+id/tab3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#5b89ff"
-                android:orientation="vertical">
-                <TextView
+                <!--TAB 3-->
+                <LinearLayout
+                    android:id="@+id/tab3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="About whatever!!!!" />
-            </LinearLayout>
-        </FrameLayout>
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"/>
-    </LinearLayout>
-</TabHost>
+                    android:background="#FF3F51B5"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="About whatever!!!!" />
+                </LinearLayout>
+            </FrameLayout>
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#817d7d"
+                android:layout_weight="0"
+                android:baselineAligned="false"/>
+        </LinearLayout>
+    </TabHost>
+</LinearLayout>
