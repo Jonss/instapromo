@@ -7,7 +7,7 @@
               android:background="#FF3F51B5"
               android:orientation="vertical"
               android:weightSum="1"
-              tools:context=".TimelineActivity">
+              tools:context=".MainActivity">
     <TabHost
         android:id="@+id/tabHost"
         android:layout_width="match_parent"
@@ -22,25 +22,6 @@
                 android:layout_height="fill_parent"
                 android:padding="2dp"
                 android:layout_weight="1" >
-
-                <!--TAB 1-->
-                <include layout="@layout/content_timeline" />
-
-                <!--TAB 2-->
-                <include layout="@layout/content_tab_photo" />
-
-                <!--TAB 3-->
-                <LinearLayout
-                    android:id="@+id/tab3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#FF3F51B5"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="About whatever!!!!" />
-                </LinearLayout>
             </FrameLayout>
             <TabWidget
                 android:id="@android:id/tabs"

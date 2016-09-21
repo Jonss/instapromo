@@ -1,4 +1,4 @@
-package br.com.instapromo.instapromo;
+package br.com.instapromo.instapromo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import br.com.instapromo.instapromo.R;
 import br.com.instapromo.instapromo.model.Product;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {

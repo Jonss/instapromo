@@ -1,4 +1,4 @@
-package br.com.instapromo.instapromo;
+package br.com.instapromo.instapromo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import br.com.instapromo.instapromo.R;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder{
 
