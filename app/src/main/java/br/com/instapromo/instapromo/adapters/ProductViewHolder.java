@@ -52,6 +52,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
     public void setProductStore(String store) {
         this.productStore.setText(store);
     }
+
     public void setImageUrl(Context context, String url) {
         Glide.with(context).load(url).into(getImageView());
     }
