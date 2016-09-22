@@ -1,6 +1,5 @@
 package br.com.instapromo.instapromo;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -35,6 +35,8 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
 import static br.com.instapromo.instapromo.R.string.permission_camera_rationale;
 import static br.com.instapromo.instapromo.R.string.permission_location_rationale;
 import static br.com.instapromo.instapromo.R.string.permission_storage_rationale;
@@ -52,7 +54,7 @@ import static br.com.instapromo.instapromo.permission.PermissionMan.requestWithS
 /**
  * Created by montanha on 9/21/16.
  */
-public class PhotoActivity extends Activity {
+public class PhotoActivity extends AppCompatActivity {
 
     private ImgurAPI apiImgur = new ImgurAPI();
     private Back4AppAPI apiBack = new Back4AppAPI();
@@ -153,6 +155,11 @@ public class PhotoActivity extends Activity {
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isEmpty(textLocal) || isEmpty(textPreco) || picturePath == null || picturePath.length() <= 0) {
+                    makeText(PhotoActivity.this, "Vc deve tirar uma foto e preencher os campos Local e Preco", LENGTH_LONG).show();
+                    return;
+                }
+
                 if (!hasPermission(PhotoActivity.this, READ_EXTERNAL_STORAGE) || !hasPermission(PhotoActivity.this, WRITE_EXTERNAL_STORAGE)) {
                     requestWithSnack(viewForSnack, PhotoActivity.this, PERMISSIONS_EXTERNAL_STORAGE, permission_storage_rationale, REQUEST_STORAGE);
                 } else {
@@ -169,6 +176,14 @@ public class PhotoActivity extends Activity {
                                     @Override
                                     public void onCompleted() {
                                         Log.d(TAG_PHOTO, "Completo");
+
+                                        imageView.setImageResource(R.mipmap.ic_launcher);
+                                        textLocal.setText("");
+                                        textDesc.setText("");
+                                        textPreco.setText("");
+
+                                        //Back to timeline
+                                        switchTabInActivity(0);
                                     }
 
                                     @Override
@@ -214,6 +229,15 @@ public class PhotoActivity extends Activity {
                 }
             }
         });
+    }
+
+    private boolean isEmpty(EditText etText) {
+        return etText.getText().toString().trim().length() <= 0;
+    }
+
+    public void switchTabInActivity(int indexTabToSwitchTo){
+        MainActivity parentActivity = (MainActivity) this.getParent();
+        parentActivity.switchTab(indexTabToSwitchTo);
     }
 
     @Override

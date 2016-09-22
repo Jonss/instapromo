@@ -43,6 +43,8 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
     private View mLayout;
 
+    private TabHost host;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -50,7 +52,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         mLayout = findViewById(R.id.llMain);
 
         Resources res = getResources();
-        TabHost host = (TabHost)findViewById(R.id.tabHost);
+        host = (TabHost)findViewById(R.id.tabHost);
         host.setup(this.getLocalActivityManager());
 
         // tab timeline
@@ -78,7 +80,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         host.addTab(tabSpecAbout);
 
         //set timeline tab as default (zero based)
-        host.setCurrentTab(0);
+        switchTab(0);
     }
 
     @Override
@@ -135,6 +137,11 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         }
     }
 
+    public void switchTab(int tab){
+        host.setCurrentTab(tab);
+        onResume();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA) {
@@ -142,7 +149,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 1 && grantResults[0] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "CAMERA permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso a camera. Pressione o botao da camera para compartilhar promocoes! =)", LENGTH_LONG);
+                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso a camera. Pressione o botao da camera para compartilhar promocoes! =)", LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "CAMERA permission was NOT granted.");
             }
@@ -151,7 +158,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 2 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "READ/WRITE permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de escrita. Pressione novamente o botao de salvar ", LENGTH_LONG);
+                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de escrita. Pressione novamente o botao de salvar ", LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "READ/WRITE permission was NOT granted.");
             }
@@ -160,7 +167,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 2 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "LOCATION permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de localizacao, assim mostraremos as promo ao seu redor! =)", LENGTH_LONG);
+                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de localizacao, assim mostraremos as promo ao seu redor! =)", LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "LOCATION permission was NOT granted.");
             }
