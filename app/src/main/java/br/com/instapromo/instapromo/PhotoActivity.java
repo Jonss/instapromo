@@ -4,17 +4,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.desmond.squarecamera.CameraActivity;
+import com.desmond.squarecamera.ImageUtility;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +51,7 @@ import static br.com.instapromo.instapromo.commons.Constants.REQUEST_LOCATION;
 import static br.com.instapromo.instapromo.commons.Constants.REQUEST_STORAGE;
 import static br.com.instapromo.instapromo.commons.Constants.TAG_PHOTO;
 import static br.com.instapromo.instapromo.commons.Constants.TITLE_CHOOSE_LOCAL;
+import static br.com.instapromo.instapromo.commons.Constants.USE_CAMERA;
 import static br.com.instapromo.instapromo.permission.PermissionMan.hasPermission;
 import static br.com.instapromo.instapromo.permission.PermissionMan.requestWithSnack;
 
@@ -66,15 +70,20 @@ public class PhotoActivity extends AppCompatActivity {
     private EditText textPreco;
 
     private File picturefile;
-    private String picturePath;
 
     private View viewForSnack;
+
+    private Point mSize;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_tab_photo);
 
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        mSize = new Point();
+        display.getSize(mSize);
 
         viewForSnack = findViewById(R.id.tab2);
 
@@ -143,11 +152,8 @@ public class PhotoActivity extends AppCompatActivity {
                 if (!hasPermission(PhotoActivity.this, CAMERA)) {
                     requestWithSnack(viewForSnack, PhotoActivity.this, PERMISSIONS_CAMERA , permission_camera_rationale, REQUEST_CAMERA);
                 } else {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    picturePath = getExternalFilesDir(null) + "/instapromo-" + System.currentTimeMillis() + ".jpg";
-                    picturefile = new File(picturePath);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picturefile));
-                    startActivityForResult(intent, 255);
+                    Intent startCustomCameraIntent = new Intent(PhotoActivity.this, CameraActivity.class);
+                    startActivityForResult(startCustomCameraIntent, USE_CAMERA);
                 }
             }
         });
@@ -157,7 +163,7 @@ public class PhotoActivity extends AppCompatActivity {
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isEmpty(textLocal) || isEmpty(textPreco) || picturePath == null || picturePath.length() <= 0) {
+                if (isEmpty(textLocal) || isEmpty(textPreco) || picturefile == null) {
                     makeText(PhotoActivity.this, "Vc deve tirar uma foto e preencher os campos Local e Preco", LENGTH_LONG).show();
                     return;
                 }
@@ -174,6 +180,7 @@ public class PhotoActivity extends AppCompatActivity {
                         requestWithSnack(viewForSnack, PhotoActivity.this, PERMISSIONS_LOCATION, permission_location_rationale, REQUEST_LOCATION);
                     } else {
                         location = new GeoLocation(PhotoActivity.this).getLocation();
+
                         rx.Observable<ImgurResponse> post = apiImgur.post(picturefile);
                         post.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -251,12 +258,25 @@ public class PhotoActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 255) {
-            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
+        if (resultCode != RESULT_OK) return;
+
+        if (requestCode == USE_CAMERA) {
+            Uri photoUri = data.getData();
+
+            picturefile = new File(photoUri.getPath());
+
+            Bitmap bitmap = ImageUtility.decodeSampledBitmapFromPath(photoUri.getPath(), mSize.x, mSize.x);
+            imageView.setImageBitmap(bitmap);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+
+//        if (requestCode == USE_CAMERA) {
+//            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+//            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
+//        }
+//
+//        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

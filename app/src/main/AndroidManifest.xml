@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="br.com.instapromo.instapromo">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="br.com.instapromo.instapromo">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -16,8 +17,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        tools:replace="android:theme"
         android:theme="@style/AppTheme">
 
+        <activity android:name="com.desmond.squarecamera.CameraActivity" />
         <activity android:name=".TimelineActivity" />
         <activity android:name=".PhotoActivity" />
         <activity android:name=".AboutActivity" />

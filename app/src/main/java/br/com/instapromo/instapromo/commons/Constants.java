@@ -24,6 +24,8 @@ public class Constants {
 
     public static String[] PERMISSIONS_LOCATION = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION};
 
+    public static final int USE_CAMERA = 255;
+
     public static final int REQUEST_CAMERA = 0;
     public static final int REQUEST_STORAGE = 1;
     public static final int REQUEST_LOCATION = 2;

@@ -54,16 +54,15 @@
             android:id="@+id/llImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF"
+            android:background="#A0A0A0"
             android:orientation="vertical"
             android:layout_above="@+id/llImage2"
             android:weightSum="1">
-            <ImageView
+            <br.com.instapromo.instapromo.components.SquareImageView
                 android:id="@+id/image_photo"
-                android:src="@mipmap/ic_launcher"
-                android:scaleType="fitXY"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
         <RelativeLayout
