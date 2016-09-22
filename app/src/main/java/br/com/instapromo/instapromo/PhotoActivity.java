@@ -50,7 +50,6 @@ import static br.com.instapromo.instapromo.commons.Constants.REQUEST_CAMERA;
 import static br.com.instapromo.instapromo.commons.Constants.REQUEST_LOCATION;
 import static br.com.instapromo.instapromo.commons.Constants.REQUEST_STORAGE;
 import static br.com.instapromo.instapromo.commons.Constants.TAG_PHOTO;
-import static br.com.instapromo.instapromo.commons.Constants.TITLE_CHOOSE_LOCAL;
 import static br.com.instapromo.instapromo.commons.Constants.USE_CAMERA;
 import static br.com.instapromo.instapromo.permission.PermissionMan.hasPermission;
 import static br.com.instapromo.instapromo.permission.PermissionMan.requestWithSnack;
@@ -123,7 +122,7 @@ public class PhotoActivity extends AppCompatActivity {
                                     }
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(PhotoActivity.this);
-                                    builder.setTitle(TITLE_CHOOSE_LOCAL);
+                                    builder.setTitle(R.string.choose_location);
                                     builder.setItems(venuesStr, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -270,13 +269,6 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
-
-//        if (requestCode == USE_CAMERA) {
-//            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-//            imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 120, 120, false));
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

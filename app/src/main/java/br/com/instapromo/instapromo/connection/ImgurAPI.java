@@ -25,12 +25,11 @@ public class ImgurAPI {
     private static final String IMGURL = "https://api.imgur.com/3/";
     private static final String AUTHORIZATION = "Client-ID 006e897cd5ac791";
 
-
     private ImgurService retrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-//        httpClient.addInterceptor(logging);
+//        httpClient.addInterceptor(logging); // <-- this is the important line!
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

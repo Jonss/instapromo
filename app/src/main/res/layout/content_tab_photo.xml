@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textLocal"
-                    android:hint="Escolha o estabelecimento"
+                    android:hint="@string/photo_location"
                     android:editable="false"/>
                 <EditText
                     android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                     android:inputType="numberDecimal"
                     android:ems="10"
                     android:id="@+id/textPreco"
-                    android:hint="Inclua o preço da promoção"/>
+                    android:hint="@string/photo_price"/>
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                     android:lines="8"
                     android:ems="10"
                     android:id="@+id/textDesc"
-                    android:hint="(opcional)\nInclua informações adicionais\nex: validade, quantidade"
+                    android:hint="@string/photo_desc"
                     android:layout_weight="0.42"/>
             </LinearLayout>
         </RelativeLayout>

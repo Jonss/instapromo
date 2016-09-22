@@ -15,8 +15,9 @@ public class Constants {
 
     public static final String TAG_PERMISSION = "PermissionMan";
 
+    public static final String TAG_BACK4APP = "Back4App";
+
     public static final String URL_NO_PROMOTION = "http://i.imgur.com/INAUbtO.png";
-    public static final String TITLE_CHOOSE_LOCAL = "Escolha o Local";
 
     public static String[] PERMISSIONS_CAMERA = {CAMERA};
 

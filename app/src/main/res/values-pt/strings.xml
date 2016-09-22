@@ -1,0 +1,17 @@
+<resources>
+    <string name="action_settings">Configurações</string>
+    <string name="permission_location_rationale">É necessário permissão de Localização para compartilhar as promoções.</string>
+    <string name="permission_storage_rationale">É necessário permissão de Leitura/Escrita para salvar e obter as fotos tiradas.</string>
+    <string name="permission_camera_rationale">É necessário permissão para Camera para tirar fotos.</string>
+    <string name="choose_location">Escolha o Local</string>
+    <string name="tab_photo">Foto</string>
+    <string name="tab_about">Sobre</string>
+    <string name="thanks_permission_camera">Obrigado por liberar o acesso a camera! =)</string>
+    <string name="thanks_permission_storage">Obrigado por liberar o acesso para salvar as fotos.</string>
+    <string name="thanks_permission_location">Obrigado por liberar o acesso de localizacao, assim mostraremos as promo ao seu redor! =)</string>
+    <string name="photo_price">Inclua o preço da promoção</string>
+    <string name="photo_location">Escolha o Local</string>
+    <string name="photo_desc">(opcional)\nInclua informações adicionais\nexemplo: validade, quantidade</string>
+    <string name="about_text_1">\n\n\nCompartilhe as promoções que estão a sua volta!\n\nFique sabendo das promoções que estão perto de você!</string>
+    <string name="about_text_2">\n\nFeito num hackday por desenvolvedores do Moip\n\nAriane Paula\nDiego GoodEnd\nJoão Santana\nGuilherme Sipoloni\nGustavo Melki\nRodrigo Monteiro\nWilliam Souza</string>
+</resources>

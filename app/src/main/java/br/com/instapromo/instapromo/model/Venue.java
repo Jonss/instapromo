@@ -1,6 +1,7 @@
 package br.com.instapromo.instapromo.model;
 
 public class Venue {
+
     String name;
 
     public String getName() {

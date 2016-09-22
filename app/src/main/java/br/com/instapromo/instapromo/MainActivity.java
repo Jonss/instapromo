@@ -58,7 +58,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         // tab timeline
         Intent intentTimeline = new Intent().setClass(this, TimelineActivity.class);
         TabSpec tabSpecTimeline = host
-                .newTabSpec("Timeline")
+                .newTabSpec(res.getString(R.string.tab_timeline))
                 .setContent(intentTimeline)
                 .setIndicator("", res.getDrawable(R.mipmap.insta_timeline, null));
         host.addTab(tabSpecTimeline);
@@ -66,7 +66,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         // tab photo
         Intent intentPhoto = new Intent().setClass(this, PhotoActivity.class);
         TabSpec tabSpecPhoto = host
-                .newTabSpec("Photo")
+                .newTabSpec(res.getString(R.string.tab_photo))
                 .setContent(intentPhoto)
                 .setIndicator("", res.getDrawable(R.mipmap.insta_pic, null));
         host.addTab(tabSpecPhoto);
@@ -74,7 +74,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
         // tab about
         Intent intentAbout = new Intent().setClass(this, AboutActivity.class);
         TabSpec tabSpecAbout = host
-                .newTabSpec("Sobre")
+                .newTabSpec(res.getString(R.string.tab_about))
                 .setContent(intentAbout)
                 .setIndicator("", res.getDrawable(R.mipmap.insta_about, null));
         host.addTab(tabSpecAbout);
@@ -149,7 +149,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 1 && grantResults[0] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "CAMERA permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso a camera. Pressione o botao da camera para compartilhar promocoes! =)", LENGTH_LONG).show();
+                makeText(this.getApplicationContext(), R.string.thanks_permission_camera, LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "CAMERA permission was NOT granted.");
             }
@@ -158,7 +158,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 2 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "READ/WRITE permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de escrita. Pressione novamente o botao de salvar ", LENGTH_LONG).show();
+                makeText(this.getApplicationContext(), R.string.thanks_permission_storage, LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "READ/WRITE permission was NOT granted.");
             }
@@ -167,7 +167,7 @@ public class MainActivity extends ActivityGroup implements ActivityCompat.OnRequ
 
             if (grantResults.length == 2 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
                 Log.i(TAG_TIMELINE, "LOCATION permission has now been granted.");
-                makeText(this.getApplicationContext(), "Obrigado por liberar o acesso de localizacao, assim mostraremos as promo ao seu redor! =)", LENGTH_LONG).show();
+                makeText(this.getApplicationContext(), R.string.thanks_permission_location, LENGTH_LONG).show();
             } else {
                 Log.i(TAG_TIMELINE, "LOCATION permission was NOT granted.");
             }

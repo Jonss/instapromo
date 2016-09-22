@@ -11,9 +11,4 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_tab_about);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 }
