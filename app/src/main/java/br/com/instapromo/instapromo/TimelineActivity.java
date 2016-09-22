@@ -2,6 +2,7 @@ package br.com.instapromo.instapromo;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,15 +44,22 @@ public class TimelineActivity extends AppCompatActivity {
 
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_tab_timeline);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshItems();
+            }
+        });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+    void refreshItems() {
         Location location;
 
         View viewForSnack = findViewById(R.id.tab1);
@@ -98,5 +106,14 @@ public class TimelineActivity extends AppCompatActivity {
                         }
                     });
         }
+
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        refreshItems();
     }
 }
