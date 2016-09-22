@@ -74,6 +74,8 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_tab_photo);
 
+        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
         viewForSnack = findViewById(R.id.tab2);
 
         //Text Local
@@ -163,6 +165,9 @@ public class PhotoActivity extends AppCompatActivity {
                 if (!hasPermission(PhotoActivity.this, READ_EXTERNAL_STORAGE) || !hasPermission(PhotoActivity.this, WRITE_EXTERNAL_STORAGE)) {
                     requestWithSnack(viewForSnack, PhotoActivity.this, PERMISSIONS_EXTERNAL_STORAGE, permission_storage_rationale, REQUEST_STORAGE);
                 } else {
+
+                    findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+
                     final Location location;
 
                     if (!hasPermission(PhotoActivity.this, ACCESS_COARSE_LOCATION) || !hasPermission(PhotoActivity.this, ACCESS_FINE_LOCATION)) {
@@ -177,6 +182,8 @@ public class PhotoActivity extends AppCompatActivity {
                                     public void onCompleted() {
                                         Log.d(TAG_PHOTO, "Completo");
 
+                                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                                         imageView.setImageResource(R.mipmap.ic_launcher);
                                         textLocal.setText("");
                                         textDesc.setText("");
@@ -188,6 +195,8 @@ public class PhotoActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onError(Throwable e) {
+                                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                                         Log.e(TAG_PHOTO, e.getMessage());
                                     }
 
@@ -235,7 +244,7 @@ public class PhotoActivity extends AppCompatActivity {
         return etText.getText().toString().trim().length() <= 0;
     }
 
-    public void switchTabInActivity(int indexTabToSwitchTo){
+    private void switchTabInActivity(int indexTabToSwitchTo){
         MainActivity parentActivity = (MainActivity) this.getParent();
         parentActivity.switchTab(indexTabToSwitchTo);
     }
