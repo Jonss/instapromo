@@ -20,7 +20,7 @@ public class FourSquareAPI {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(BODY);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);  // <-- this is the important line!
+//        httpClient.addInterceptor(logging);  // <-- this is the important line!
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
